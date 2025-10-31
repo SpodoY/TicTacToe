@@ -90,7 +90,7 @@ contract TicTacToe {
         if (cur.moves == FILED_SIZE * FILED_SIZE) {
             cur.isFinished;
             uint256 amount = 0.1 ether;
-            require(address(this).balance > amount * 2, "Not enough balance");
+            require(address(this).balance >= amount * 2, "Not enough balance on the contract");
             (bool sentToPl1, ) = cur.player1.call{value: amount}("");
             require(sentToPl1, "Failed to send ETH");
             (bool sentToPl2, ) = cur.player2.call{value: amount}("");
@@ -135,7 +135,7 @@ contract TicTacToe {
         cur.isFinished = true;
 
         uint256 amount = DEPOSIT_AMOUNT *2;
-        require(address(this).balance > amount, "Not enough balance");
+        require(address(this).balance >= amount, "Not enough balance on the contract");
         (bool sent, ) = msg.sender.call{value: amount}("");
         require(sent, "Failed to send ETH");
         totalVolume -= amount;
@@ -151,7 +151,7 @@ contract TicTacToe {
         revert("Game not found");
     }
 
-    function getGame(uint256 gameId) external view returns (FieldStatus[5][5] memory) {
+    function getGame(uint256 gameId) external view returns (FieldStatus[FILED_SIZE][FILED_SIZE] memory) {
         return games[gameId].board;
     }
 }
