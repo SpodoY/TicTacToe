@@ -1,10 +1,19 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
+import {ethers} from "ethers"
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [block, setBlock] = useState(0)
+
+  const fetchCurBlock = async () => {
+    var provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+    var blockNumber = await provider.getBlockNumber();
+    console.log(blockNumber);
+    setBlock(blockNumber);
+  }
 
   return (
     <>
@@ -20,6 +29,9 @@ function App() {
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
+        </button>
+        <button onClick={async () => await fetchCurBlock()}>
+          Current block is: {block}
         </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
