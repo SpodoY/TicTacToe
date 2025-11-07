@@ -1,47 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import {ethers} from "ethers"
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import reactLogo from "./assets/react.svg";
+import { ethers } from "ethers";
+import viteLogo from "/vite.svg";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [block, setBlock] = useState(0)
+  const [count, setCount] = useState(0);
+  const [block, setBlock] = useState(0);
+  const [pending, setPending] = useState([]);
+
+  var provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
   const fetchCurBlock = async () => {
-    var provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
     var blockNumber = await provider.getBlockNumber();
     console.log(blockNumber);
     setBlock(blockNumber);
+  };
+
+  const getPendingTransactions = async () => {
+    const pendingBlock = await provider.send("eth_getBlockByNumber", [
+      "pending",
+      false,
+    ]);
+    setPending(pendingBlock)
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getPendingTransactions()
+    }, 6000);
+    
+    return () => clearInterval(interval);
+  },[])
+
+  const Square = (value: string, onSquareClick: () => void) => {
+    return (
+      <button className="square" onClick={onSquareClick}>
+        {value}
+      </button>
+    )
   }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+    <div className="gameBoard">
+      <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
         <button onClick={async () => await fetchCurBlock()}>
           Current block is: {block}
         </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

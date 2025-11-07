@@ -5,6 +5,16 @@ import { configVariable } from "hardhat/config";
 
 const config: HardhatUserConfig = {
   plugins: [hardhatToolboxViemPlugin],
+  networks: {
+    hardhatMainnet: {
+      type: "edr-simulated",
+      chainType: "l1",
+      mining: {
+        interval: 1000,
+        auto: false,
+      },
+    },
+  },
   solidity: {
     profiles: {
       default: {
@@ -21,22 +31,22 @@ const config: HardhatUserConfig = {
       },
     },
   },
-  networks: {
-    hardhatMainnet: {
-      type: "edr-simulated",
-      chainType: "l1",
-    },
-    hardhatOp: {
-      type: "edr-simulated",
-      chainType: "op",
-    },
-    sepolia: {
-      type: "http",
-      chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
-    },
-  },
+  // networks: {
+  //   hardhatMainnet: {
+  //     type: "edr-simulated",
+  //     chainType: "l1",
+  //   },
+  //   hardhatOp: {
+  //     type: "edr-simulated",
+  //     chainType: "op",
+  //   },
+  //   sepolia: {
+  //     type: "http",
+  //     chainType: "l1",
+  //     url: configVariable("SEPOLIA_RPC_URL"),
+  //     accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+  //   },
+  // },
 };
 
 export default config;
