@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
 import { ethers } from "ethers";
-import viteLogo from "/vite.svg";
 import "./App.css";
+import Board from "./components/Board";
+import GameControls from "./components/GameControls";
+import { GameHeader } from "./components/GameHeader";
+import { GameStatus } from "./components/GameStatus";
 
 function App() {
-  const [count, setCount] = useState(0);
   const [block, setBlock] = useState(0);
   const [pending, setPending] = useState([]);
 
@@ -29,29 +30,17 @@ function App() {
     const interval = setInterval(() => {
       getPendingTransactions()
     }, 6000);
-    
-    return () => clearInterval(interval);
-  },[])
 
-  const Square = (value: string, onSquareClick: () => void) => {
-    return (
-      <button className="square" onClick={onSquareClick}>
-        {value}
-      </button>
-    )
-  }
+    return () => clearInterval(interval);
+  }, [])
 
   return (
-    <>
-    <div className="gameBoard">
-      <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <button onClick={async () => await fetchCurBlock()}>
-          Current block is: {block}
-        </button>
+    <div className="bg-gray-600 rounded-2xl shadow-2xl p-6 w-2xl">
+      <GameHeader />
+      <GameStatus />
+      <Board />
+      <GameControls />
     </div>
-    </>
   );
 }
 

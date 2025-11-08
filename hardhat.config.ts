@@ -10,8 +10,8 @@ const config: HardhatUserConfig = {
       type: "edr-simulated",
       chainType: "l1",
       mining: {
-        interval: 1000,
-        auto: false,
+        auto: true,
+        interval: 12000
       },
     },
   },
