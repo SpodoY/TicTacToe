@@ -28,8 +28,9 @@ const Board = () => {
 
   const isWinningCell = (idx: number) => winningLine.includes(idx);
 
+  // TODO: make this listen to BoardSize (make that work)
   return (
-    <div className={`grid grid-cols-${BoardSize} gap-3 mb-6`}>
+    <div className={`grid grid-cols-5 gap-3 mb-6`}>
       {board.map((cell, idx) => (
         <Cell
           key={idx}
