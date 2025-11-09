@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import "./App.css";
-import Board from "./components/Board";
-import GameControls from "./components/GameControls";
-import { GameHeader } from "./components/GameHeader";
-import { GameStatus } from "./components/GameStatus";
+import Lobby  from "./components/Lobby"
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import GameView from "./components/GameView";
 
 function App() {
   const [block, setBlock] = useState(0);
@@ -35,12 +34,18 @@ function App() {
   }, [])
 
   return (
-    <div className="bg-gray-600 rounded-2xl shadow-2xl p-6 w-2xl">
-      <GameHeader />
-      <GameStatus />
-      <Board />
-      <GameControls />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" 
+               element={    
+                <Lobby
+                  provider={provider}
+                  contractAdress = "0x1429859428c0abc9c2c47c8ee9fbaf82cfa0f20f"
+                />}  
+              />
+        <Route path="/game" element={<GameView/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
