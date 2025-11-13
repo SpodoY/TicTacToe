@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import "./App.css";
-import Lobby  from "./components/Lobby"
+import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import GameView from "./components/GameView";
+import "./App.css";
+import { GamePage } from "./pages/GamePage";
+import { LobbyPage } from "./pages/LobbyPage";
 
 function App() {
   const [block, setBlock] = useState(0);
@@ -36,14 +36,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" 
-               element={    
-                <Lobby
-                  provider={provider}
-                  contractAdress = "0x1429859428c0abc9c2c47c8ee9fbaf82cfa0f20f"
-                />}  
-              />
-        <Route path="/game" element={<GameView/>}/>
+        <Route path="/"
+          element={<LobbyPage provider={provider}
+            contractAdress="0x1429859428c0abc9c2c47c8ee9fbaf82cfa0f20f" />}
+        />
+        <Route path="/game" element={<GamePage />} />
       </Routes>
     </BrowserRouter>
   );
