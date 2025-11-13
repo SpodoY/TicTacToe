@@ -1,7 +1,9 @@
-import type { HardhatUserConfig } from "hardhat/config";
+import { configVariable, type HardhatUserConfig } from "hardhat/config";
 
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
-import { configVariable } from "hardhat/config";
+import "dotenv";
+
+const { MNEMONIC, INFURA_KEY } = process.env
 
 const config: HardhatUserConfig = {
   plugins: [hardhatToolboxViemPlugin],
@@ -14,6 +16,12 @@ const config: HardhatUserConfig = {
         interval: 12000
       },
     },
+    sepolia: {
+      type: "http",
+      chainType: "l1",
+      url: configVariable("SEPOLIA_RPC_URL"), // `https://sepolia.infura.io/v3/${INFURA_KEY}`,
+      accounts: [configVariable("MNEMONIC")]  // 12 words from wallet
+    }
   },
   solidity: {
     profiles: {
