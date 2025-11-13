@@ -40,6 +40,9 @@ function App() {
       <GameStatus />
       <Board />
       <GameControls />
+      <button onClick={fetchCurBlock} className="mt-6">
+        Current block: {block}
+      </button>
     </div>
   );
 }
