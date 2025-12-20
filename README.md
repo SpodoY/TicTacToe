@@ -1,3 +1,18 @@
+# How to start the project
+
+run inside root of project 
+
+```shell 
+npx hardhat complie
+
+npm run hh-auto
+
+npx hardhat run scripts/deploy-tic.ts --network localhost
+
+```
+copy the last adress to App.tsx
+
+
 # Sample Hardhat 3 Beta Project (`node:test` and `viem`)
 
 This project showcases a Hardhat 3 Beta project using the native Node.js test runner (`node:test`) and the `viem` library for Ethereum interactions.

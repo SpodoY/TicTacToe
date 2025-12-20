@@ -154,5 +154,29 @@ contract TicTacToe {
     function getGame(uint256 gameId) external view returns (FieldStatus[FILED_SIZE][FILED_SIZE] memory) {
         return games[gameId].board;
     }
+
+    function getOpenGames() external view returns (Game[] memory) {
+    uint256 openCount = 0;
+    
+    // First pass: count open games
+    for (uint i = 0; i < games.length; i++) {
+        if (games[i].player2 == address(0)) {
+            openCount++;
+        }
+    }
+    
+    // Second pass: populate array
+    Game[] memory openGames = new Game[](openCount);
+    uint256 index = 0;
+    
+    for (uint i = 0; i < games.length; i++) {
+        if (games[i].player2 == address(0)) {
+            openGames[index] = games[i];
+            index++;
+        }
+    }
+    
+    return openGames;
+    }
 }
 
