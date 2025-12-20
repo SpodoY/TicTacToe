@@ -1,48 +1,60 @@
 import { useEffect, useState } from "react";
-import { ethers } from "ethers";
-import ABI from "../abis/TicTacToe.json";
-import LobbyCard from "./LobbyCard";
+import type { LobbyProps } from "../pages/LobbyPage";
 import { parseGames, type Game } from "../utils/ethDataMapper";
+import LobbyCard from "./LobbyCard";
+import { getContract } from "../utils/ContractUtils";
+import type { Contract } from "ethers";
+import { LoadingSpinner } from "./utils/LoadingSpinner";
 
-interface LobbyParams {
-    provider: ethers.JsonRpcProvider
-    contractAdress: string
-}
+const Lobby = ({ provider }: LobbyProps) => {
 
-const Lobby = ({ provider, contractAdress }: LobbyParams) => {
+  const [openGames, setOpenGames] = useState<Game[]>([])
+  const [contract, setContract] = useState<Contract>()
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null)
 
-    const [openGames, setOpenGames] = useState<Game[]>([])
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null)
+  const loadContract = async () => {
 
-    const loadContract = async () => {
+    const localContract = await getContract(provider)
 
-        try{
-          const daiContract = new ethers.Contract(contractAdress, ABI.abi, provider); 
-          setOpenGames(parseGames( await daiContract.getOpenGames()))
-          setError(null);
-      } catch (err: any) {
-        console.error(err);
-        setError("Failed to load open games");
-      } finally {
-        setLoading(false);
-      }
-    };
+    console.log(await provider?.getNetwork());
+    console.log(await provider?.send("eth_chainId", []));
+    console.log(await provider?.getSigner().then(s => s.getAddress()));
+
+    if (localContract == null) return;
+
+    setContract(localContract)
+
+    try {
+      const response = await localContract.getOpenGames();
+      console.log('Response:', response)
+
+      setOpenGames(parseGames(response))
+      setError(null);
+
+    }
+    catch (err: any) {
+      console.error(err);
+      setError("Failed to load open games");
+    }
+    finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     loadContract();
-    const interval = setInterval(loadContract, 5000); 
-    return () => clearInterval(interval); 
+    const interval = setInterval(loadContract, 5000);
+    return () => clearInterval(interval);
   }, []);
 
-
   return (
-    
+
     <div className="flex flex-col items-center mb-8 w-full gap-6 p-6">
       <button
-        className="relative px-8 py-3 text-lg font-semibold text-white rounded-xl shadow-lg 
+        className="relative px-8 py-3 text-2xl font-semibold text-white rounded-xl shadow-lg 
         transition-all focus:outline-none focus:ring-4 focus:ring-blue-300 
-        bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
+        bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 
         disabled:opacity-70 disabled:cursor-not-allowed`"
       >
         Create Game
@@ -50,7 +62,7 @@ const Lobby = ({ provider, contractAdress }: LobbyParams) => {
 
       <h1 className="text-3xl font-bold text-center mb-2">
         {loading
-          ? "Loading open lobbies..."
+          ? <div> Loading open lobbies... <LoadingSpinner /> </div>
           : `There ${openGames.length === 1 ? "is" : "are"} ${openGames.length} open ${openGames.length === 1 ? "lobby" : "lobbies"}`}
       </h1>
 
@@ -68,14 +80,14 @@ const Lobby = ({ provider, contractAdress }: LobbyParams) => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-5xl">
         {openGames.map((info, idx) => (
-          <LobbyCard key={idx} owner={info.player1} gameId={info.id} />
+          <LobbyCard key={idx} owner={info.player1} gameId={info.id} contract={contract} />
         ))}
       </div>
     </div>
-  
+
 
   );
-} 
+}
 
 
 export default Lobby

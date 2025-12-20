@@ -1,13 +1,12 @@
 import type { ethers } from 'ethers'
 import Lobby from '../components/Lobby'
 
-type LobbyPageProps = {
-    provider: ethers.JsonRpcProvider
-    contractAdress: string
+export type LobbyProps = {
+    provider: ethers.BrowserProvider | null
 }
 
-export const LobbyPage = ({contractAdress, provider}: LobbyPageProps) => {
+export const LobbyPage = ({provider}: LobbyProps) => {
   return (
-    <Lobby contractAdress={contractAdress} provider={provider}  />
+    <Lobby provider={provider}  />
   )
 }

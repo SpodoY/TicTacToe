@@ -1,14 +1,25 @@
+import type { Contract } from "ethers";
 import { useNavigate } from "react-router-dom";
 
 type LobbyProps = {
   owner: string;
   gameId: bigint;
+  contract: Contract | undefined;
 }
 
-
-const LobbyCard = ({ owner, gameId }: LobbyProps) => {
+const LobbyCard = ({ owner, gameId, contract }: LobbyProps) => {
 
     const navigate = useNavigate();
+
+    const joinLobby = async () => {
+        console.log("clicked me")
+        const joinResult = await contract?.joinGame(gameId);
+
+        console.log(joinResult);
+        return;
+
+        navigate("/game")
+    }
 
     return(
     <div className="w-full max-w-sm">
@@ -22,7 +33,7 @@ const LobbyCard = ({ owner, gameId }: LobbyProps) => {
             </p>
 
             <button
-            onClick={() => navigate("/game")}
+            onClick={joinLobby}
             className="mt-4 w-full px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-700 transition-all"
             >
             Join
