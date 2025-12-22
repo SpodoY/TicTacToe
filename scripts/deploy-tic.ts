@@ -52,8 +52,11 @@ async function main() {
 
   console.log(await contract1.getOpenGames())
 
-  console.log(tic.address)
+  const test = await contract2.createGame({
+    value: ethers.parseEther("0.1"), // send 0.1 ETH
+  });
 
+  console.log(tic.address)
 
 }
 

@@ -4,6 +4,7 @@ import { useMetaMask } from "./hooks/useMetaMask";
 import { GamePage } from "./pages/GamePage";
 import { LobbyPage } from "./pages/LobbyPage";
 import { ethers } from "ethers";
+import { WaitingRoomPage } from "./pages/WaitingRoom";
 
 function App() {
   // const { account, chainId, provider } = useMetaMask();
@@ -15,7 +16,8 @@ function App() {
         <Route path="/"
           element={<LobbyPage provider={provider} />}
         />
-        <Route path="/game" element={<GamePage />} />
+        <Route path="/game/:gameId" element={<GamePage />} />
+        <Route path="/waiting/:gameId" element={<WaitingRoomPage provider={provider}/>} />
       </Routes>
     </BrowserRouter>
   );

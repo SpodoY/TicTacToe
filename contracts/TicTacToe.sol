@@ -128,6 +128,8 @@ contract TicTacToe {
 
         cur.currentPlayer = curFiledStatus == FieldStatus.Player1 ? cur.player2 : cur.player1;
 
+        emit MoveMade(gameID, msg.sender, x, y);
+
     }
 
     function won(uint256 gameId) internal  {
