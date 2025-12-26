@@ -16,9 +16,9 @@ const LobbyCard = ({ owner, gameId, contract }: LobbyProps) => {
         const joinResult = await contract?.joinGame(gameId);
 
         console.log(joinResult);
-        return;
 
         navigate("/game")
+        return;
     }
 
     return(

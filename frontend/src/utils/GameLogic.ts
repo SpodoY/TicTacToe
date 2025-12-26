@@ -1,5 +1,5 @@
 import { BoardSize } from "../constants/GameConstants";
-import type { Board, BoardPosition, Cell, Player, WinnerResult } from "../types/GameState";
+import type { Board, BoardPosition, Cell, GameState, MoveResult, Player, WinnerResult } from "../types/GameState";
 
 export class GameLogic {
 
@@ -98,6 +98,11 @@ export class GameLogic {
         return lines;
     }
 
+    static unsuccessfulMsg(error: string, state?: GameState): MoveResult {
+        return {success: false, error: error, gameState: state }
+    }
 
-
+    static successfulMsg(state: GameState): MoveResult {
+        return { success: true, gameState: state }
+    }
 }
