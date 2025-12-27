@@ -12,6 +12,8 @@ export interface GameStore extends GameState {
     userAddress: string | null
     isPlayer1: boolean;
     isPlayer2: boolean;
+    playerSymbol: 'X' | 'O' | null;
+    isWaitingForOpponent: boolean;
 
     stateManager: GameStateManager;
 
@@ -20,11 +22,17 @@ export interface GameStore extends GameState {
     makeMove: (position: number) => Promise<void>;
     resetGame: () => Promise<void>;
     syncState: (state: GameState) => void;
+    updatePlayerInfo: (player1: string, player2: string) => void;
 }
 
 export const useGameStore = create<GameStore>((set, get) => {
 
-    const initialManager = new BlockchainGameState({ contractAddress: '0x5fbdb2315678afecb367f032d93f642f64180aa3' });
+    const initialManager = new BlockchainGameState({ 
+        contractAddress: '0x5fbdb2315678afecb367f032d93f642f64180aa3',
+        onPlayerInfoUpdate: (player1: string, player2: string) => {
+            get().updatePlayerInfo(player1, player2)
+        }
+     });
 
     initialManager.onStateChange(newState => {
         get().syncState(newState);
@@ -41,6 +49,7 @@ export const useGameStore = create<GameStore>((set, get) => {
         userAddress: null,
         isPlayer1: false,
         isPlayer2: false,
+        isWaitingForOpponent: false,
 
         initGame: async () => {
             set({ loading: true });
@@ -117,5 +126,20 @@ export const useGameStore = create<GameStore>((set, get) => {
                 winningLine: state.winningLine,
             });
         },
+
+        updatePlayerInfo: (player1: string, player2: string) => {
+            const userAddress = get().userAddress?.toLocaleLowerCase();
+            const isPlayer1 = userAddress === player1.toLocaleLowerCase();
+            const isPlayer2 = userAddress === player2.toLocaleLowerCase();
+            const playerSymbol = isPlayer1 ? 'X' : isPlayer2 ? 'O' : null;
+            const isWaitingForOpponent = player2 === '0x0000000000000000000000000000000000000000'
+
+            set({
+                isPlayer1,
+                isPlayer2,
+                playerSymbol,
+                isWaitingForOpponent
+            })
+        }
     }
 })

@@ -23,6 +23,7 @@ function App() {
           element={<GameLobby gameState={ stateManager as BlockchainGameState } /> }
         />
         <Route path="/game/:id" element={<GamePage />} />
+        {/* <Route path="/waiting/:id" element={<WaitingRoomPage />} /> */}
       </Routes>
     </BrowserRouter>
   );

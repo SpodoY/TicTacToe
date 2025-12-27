@@ -23,12 +23,13 @@ contract TicTacToe {
     }
 
     Game[] public games;
-    uint256 public nextGameId;
+    uint256 public nextgameId;
     uint256 public totalVolume;
 
-    event GameCreated(uint256 gameId, address player1);
-    event GameJoined(uint256 gameId, address player2);
-    event MoveMade(uint256 gameId, address player, uint256 x, uint256 y);
+    event GameCreated(uint256 indexed gameId, address indexed player1);
+    event GameJoined(uint256 indexed gameId,address indexed player1, address indexed player2);
+    event MoveMade(uint256 indexed gameId, address indexed player, uint256 x, uint256 y, address nextPlayer);
+    event GameFinished(uint256 indexed gameId, address indexed winner, bool isDraw);
 
     receive() external payable {}
 
@@ -41,7 +42,7 @@ contract TicTacToe {
 
         Game memory newGame;
         newGame.player1 = msg.sender;
-        newGame.id = nextGameId++;
+        newGame.id = nextgameId++;
         newGame.currentPlayer = msg.sender;
         newGame.isFinished = false;
         for (uint i = 0; i < FILED_SIZE; i++) {
@@ -67,15 +68,15 @@ contract TicTacToe {
 
         cur.player2 = msg.sender;
 
-        emit GameJoined(cur.id, msg.sender);
+        emit GameJoined(cur.id, cur.player1, msg.sender);
     }
 
 
-    function makeMove(uint gameID, uint x, uint y) external  {
+    function makeMove(uint gameId, uint x, uint y) external  {
         
         require(x >= 0 && x < FILED_SIZE && y >= 0 && y < FILED_SIZE, "Invalid field");
 
-        Game storage cur = games[getGameById(gameID)];
+        Game storage cur = games[getGameById(gameId)];
 
         require(cur.currentPlayer == msg.sender, "Not your turn");
         require(cur.isFinished == false, "The game is already over");
@@ -88,13 +89,18 @@ contract TicTacToe {
 
         //This is when all move are made 
         if (cur.moves == FILED_SIZE * FILED_SIZE) {
-            cur.isFinished;
+            
+            cur.isFinished = true;
             uint256 amount = 0.1 ether;
             require(address(this).balance >= amount * 2, "Not enough balance on the contract");
+
             (bool sentToPl1, ) = cur.player1.call{value: amount}("");
             require(sentToPl1, "Failed to send ETH");
+
             (bool sentToPl2, ) = cur.player2.call{value: amount}("");
             require(sentToPl2, "Failed to send ETH");
+
+            emit GameFinished(gameId, msg.sender, true);
         } 
 
         // Match For A win with just one for loop
@@ -122,12 +128,13 @@ contract TicTacToe {
         }
 
         if(rowMatch || colMatch || digMatch || invDigMatch){
-            won(gameID);
+            won(gameId);
             return;
         }
 
         cur.currentPlayer = curFiledStatus == FieldStatus.Player1 ? cur.player2 : cur.player1;
 
+        emit MoveMade(gameId, msg.sender, x, y, cur.currentPlayer);
     }
 
     function won(uint256 gameId) internal  {
@@ -139,6 +146,8 @@ contract TicTacToe {
         (bool sent, ) = msg.sender.call{value: amount}("");
         require(sent, "Failed to send ETH");
         totalVolume -= amount;
+
+        emit GameFinished(gameId, msg.sender, false);
     }
 
 
@@ -153,6 +162,10 @@ contract TicTacToe {
 
     function getGame(uint256 gameId) external view returns (FieldStatus[FILED_SIZE][FILED_SIZE] memory) {
         return games[gameId].board;
+    }
+
+    function getCurrentPlayer(uint256 gameId) external view returns (address) {
+        return games[gameId].currentPlayer;
     }
 
     function getOpenGames() external view returns (Game[] memory) {
@@ -179,4 +192,3 @@ contract TicTacToe {
     return openGames;
     }
 }
-
