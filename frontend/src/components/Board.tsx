@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { BoardSize } from '../constants/GameConstants';
 import { useGameStore } from '../store/gameStore';
 import Cell from './Cell';
 
@@ -9,22 +7,13 @@ const Board = () => {
   const loading = useGameStore(state => state.loading);
   const gameResult = useGameStore(state => state.gameResult);
   const winningLine = useGameStore(state => state.winningLine);
-
   const makeMove = useGameStore(state => state.makeMove);
-  const initGame = useGameStore(state => state.initGame);
-
-  useEffect(() => {
-    initGame();
-  }, [initGame])
 
   const handleCellClick = (idx: number) => {    
     if (!loading && !gameResult) {    
       makeMove(idx);
     }
   }
-
-  useEffect(() => {
-  }, [winningLine])
 
   const isWinningCell = (idx: number) => winningLine.includes(idx);
 
