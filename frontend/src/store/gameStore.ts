@@ -70,15 +70,17 @@ export const useGameStore = create<GameStore>((set, get) => {
             try {
                 const manager = get().stateManager as BlockchainGameState;
 
+                await manager.initGame()
                 // Load game state as user already joined game
                 await manager.loadExistingGame(gameId);
-
                 const currentGameId = manager.getCurrentGameId();
                 const userAddress = manager.getUserAddress();
-
+                const symbol = manager.getUserSymbol()
+                
                 set({
                     currentGameId,
                     userAddress,
+                    playerSymbol: symbol
                 });
 
             } catch (error) {

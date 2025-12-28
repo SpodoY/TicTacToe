@@ -16,6 +16,7 @@ interface GameLobbyProps {
 export const GameLobby: React.FC<GameLobbyProps> = ({ gameState }) => {
     const navigate = useNavigate();
     const [openGames, setOpenGames] = useState<OpenGame[]>([]);
+    const [activeGames, setActiveGames] = useState<OpenGame[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [creating, setCreating] = useState(false);
@@ -36,6 +37,8 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ gameState }) => {
             setError(null);
             const games = await gameState.getOpenGames();
             setOpenGames(games);
+            const playingGmaes = await  gameState.getActiveGamesForSender();
+            setActiveGames(playingGmaes)
             console.log('Successfully loaded games')
         } catch (err: any) {
             console.error('Error loading games:', err);
@@ -64,6 +67,20 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ gameState }) => {
         setError(null);
         try {
             await gameState.joinGame(gameId);
+            navigate(`/game/${gameId}`);
+        } catch (err: any) {
+            console.error('Error joining game:', err);
+            setError(err.message || 'Failed to join game');
+        } finally {
+            setJoining(null);
+        }
+    };
+
+
+    const handleJoinActiveGame = async (gameId: number) => {
+        setJoining(gameId);
+        setError(null);
+        try {
             navigate(`/game/${gameId}`);
         } catch (err: any) {
             console.error('Error joining game:', err);
@@ -116,6 +133,60 @@ export const GameLobby: React.FC<GameLobbyProps> = ({ gameState }) => {
                             <p className="text-red-200 text-center">{error}</p>
                         </div>
                     )}
+
+                    {/* Active Games List */}
+
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-2xl font-bold text-white">Your Active Games</h2>
+                            <button
+                                onClick={loadOpenGames}
+                                disabled={loading}
+                                className="text-purple-300 hover:text-purple-100 transition-colors"
+                            >
+                                <svg className={`w-6 h-6 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                            </button>
+                        </div>
+
+                    <div className="space-y-3">
+                                    {activeGames.map((game) => {
+                                        return (
+                                            <div
+                                                key={game.id}
+                                                className="bg-white/5 hover:bg-white/10 rounded-xl p-4 border border-white/10 hover:border-purple-500/50 transition-all"
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-3 mb-2">
+                                                            <span className="text-white font-bold text-lg">
+                                                                Game #{game.id}
+                                                            </span>
+                            
+                                                        </div>
+                                                        <div className="text-gray-300 text-sm">
+                                                            <span className="text-gray-400">Host:</span>{' '}
+                                                            {truncateAddress(game.player1)}
+                                                        </div>
+                                                        <div className="text-gray-400 text-xs mt-1">
+                                                            Stake: 0.1 ETH
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleJoinActiveGame(game.id)}
+                                                        className="bg-green-500 hover:bg-green-600 disabled:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-all disabled:cursor-not-allowed min-w-[120px]"
+                                                    >
+                                                        Continue
+    
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                <br/>
+
 
                     {/* Open Games List */}
                     <div>
