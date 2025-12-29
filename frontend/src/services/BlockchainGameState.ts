@@ -56,6 +56,12 @@ export class BlockchainGameState extends GameStateManager {
             throw new Error('MetaMask is not installed');
         }
 
+        if (this.contract !== null) {
+            console.log(this.contract)
+            console.log("already inited ")
+            return
+        }
+
         await window.ethereum.request({ method: 'eth_requestAccounts' });
 
         this.provider = new ethers.BrowserProvider(window.ethereum);
@@ -219,12 +225,13 @@ export class BlockchainGameState extends GameStateManager {
 
         try {
             // Fetch open games to get player info
-            const openGames = await this.contract.getOpenGames();
-            const game = openGames.find((g: any) => Number(g.id) === this.currentGameId);
+            const game = await this.contract.games( this.currentGameId);
+            //const game = openGames.find((g: any) => Number(g.id) === this.currentGameId);
 
             if (game) {
                 this.gameInfo.player1 = game.player1;
                 this.gameInfo.player2 = game.player2;
+                this.sy
                 this.gameInfo.isFinished = game.isFinished;
             }
 
@@ -235,6 +242,7 @@ export class BlockchainGameState extends GameStateManager {
             const newBoard = this.convertBoardFromContract(boardData);
 
             const moveCount = newBoard.filter(cell => cell !== null).length;
+            console.log("move count", moveCount)
             const currentPlayer: Player = moveCount % 2 === 0 ? 'X' : 'O';
             const winnerResult = GameLogic.checkIsWinner(newBoard);
 
@@ -249,6 +257,16 @@ export class BlockchainGameState extends GameStateManager {
         } catch (error) {
             console.error('Error loading initial game state:', error);
         }
+    }
+
+    public getUserSymbol(): Player | null {
+        console.log(this.gameInfo)
+
+        if (!this.userAddress || !this.gameInfo.player1) return null;
+
+        return this.userAddress.toLowerCase() === this.gameInfo.player1.toLowerCase()
+            ? 'X'
+            : 'O';
     }
 
     /**
@@ -271,8 +289,8 @@ export class BlockchainGameState extends GameStateManager {
 
                 console.log('Raw GameJoined event received:', { eventGameId, player1, player2, expectedGameId: gameId });
 
-                console.log(typeof(eventGameId))
-                console.log(typeof(gameId))
+                console.log(typeof (eventGameId))
+                console.log(typeof (gameId))
                 console.log(eventGameId, gameId)
 
                 if (Number(eventGameId) == gameId) {
@@ -301,6 +319,7 @@ export class BlockchainGameState extends GameStateManager {
 
                 if (Number(eventGameId) === gameId) {
                     console.log('MoveMade event:', { player, x: Number(x), y: Number(y), nextPlayer });
+                    console.log(Number(x), Number(y), player, nextPlayer)
                     this.handleMoveEvent(Number(x), Number(y), player, nextPlayer);
                 }
             };
@@ -423,6 +442,22 @@ export class BlockchainGameState extends GameStateManager {
             moves: Number(game.moves)
         }));
     }
+
+   async getActiveGamesForSender(): Promise<any[]> {
+        if (!this.contract) {
+            throw new Error('Contract not initialized');
+        }
+
+        const openGames = await this.contract.getActiveGamesForSender();
+        console.log("ope" , openGames)
+        return openGames.map((game: any) => ({
+            id: Number(game.id),
+            player1: game.player1,
+            player2: game.player2,
+            moves: Number(game.moves)
+        }));
+    }
+
 
     /**
      * Make a move on the blockchain
