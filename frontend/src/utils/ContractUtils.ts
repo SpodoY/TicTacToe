@@ -6,7 +6,7 @@ export const getContract = async (provider: BrowserProvider | null): Promise<Con
 
     if (!provider) return null;
 
-    const contractAdress = "0x5fbdb2315678afecb367f032d93f642f64180aa3"
+    const contractAdress = "0x10269fB4c2c6F0cb04849Cd61708870691E5A348"
 
     const signer = await provider.getSigner();
     const contract = new Contract(contractAdress, ABI.abi, signer)
