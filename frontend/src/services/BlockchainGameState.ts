@@ -141,7 +141,9 @@ export class BlockchainGameState extends GameStateManager {
 
             if (events.length > 0) {
                 const event = events[events.length - 1]; // Get the last event
+                //@ts-ignore
                 gameId = Number(event.args[0]);
+                //@ts-ignore
                 player1Address = event.args[1];
                 console.log('Found via queryFilter:', { gameId, player1Address });
             }
@@ -231,7 +233,6 @@ export class BlockchainGameState extends GameStateManager {
             if (game) {
                 this.gameInfo.player1 = game.player1;
                 this.gameInfo.player2 = game.player2;
-                this.sy
                 this.gameInfo.isFinished = game.isFinished;
             }
 

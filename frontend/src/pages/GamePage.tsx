@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom'
 import Board from '../components/Board'
-import GameControls from '../components/GameControls'
 import { GameHeader } from '../components/GameHeader'
 import { GameStatus } from '../components/GameStatus'
 import { useGameStore } from '../store/gameStore'
@@ -11,7 +10,6 @@ export const GamePage = () => {
   const loadGame = useGameStore(state => state.loadGame)
   const currentGameId = useGameStore(state => state.currentGameId)
   const loading = useGameStore(state => state.loading)
-  const userAddress = useGameStore(state => state.userAddress)
   const playerSymbol = useGameStore(state => state.playerSymbol)
   const isWaitingForOpponent = useGameStore(state => state.isWaitingForOpponent)
 
