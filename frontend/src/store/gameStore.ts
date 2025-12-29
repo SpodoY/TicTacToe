@@ -28,7 +28,7 @@ export interface GameStore extends GameState {
 export const useGameStore = create<GameStore>((set, get) => {
 
     const initialManager = new BlockchainGameState({ 
-        contractAddress: '0x5fbdb2315678afecb367f032d93f642f64180aa3',
+        contractAddress: '0x10269fB4c2c6F0cb04849Cd61708870691E5A348',
         onPlayerInfoUpdate: (player1: string, player2: string) => {
             get().updatePlayerInfo(player1, player2)
         }
