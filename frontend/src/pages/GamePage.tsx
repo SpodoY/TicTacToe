@@ -35,6 +35,7 @@ export const GamePage = () => {
             <p className="text-white text-xl">Loading game...</p>
           </div>
         </div>
+      <div></div>
       </div>
     );
   }
