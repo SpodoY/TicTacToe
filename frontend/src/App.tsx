@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { GameLobby } from "./pages/GameLobbyPage";
 import { GamePage } from "./pages/GamePage";
@@ -17,7 +17,7 @@ function App() {
   }, [initGame])
 
   return (
-    <BrowserRouter basename="/TicTacToe">
+    <HashRouter>
       <Routes>
         <Route path="/"
           element={<GameLobby gameState={ stateManager as BlockchainGameState } /> }
@@ -25,7 +25,7 @@ function App() {
         <Route path="/game/:id" element={<GamePage />} />
         {/* <Route path="/waiting/:id" element={<WaitingRoomPage />} /> */}
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
