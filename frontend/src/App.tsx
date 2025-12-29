@@ -17,7 +17,7 @@ function App() {
   }, [initGame])
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/TicTacToe">
       <Routes>
         <Route path="/"
           element={<GameLobby gameState={ stateManager as BlockchainGameState } /> }

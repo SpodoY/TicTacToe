@@ -50,6 +50,7 @@ export const useGameStore = create<GameStore>((set, get) => {
         isPlayer1: false,
         isPlayer2: false,
         isWaitingForOpponent: false,
+        playerSymbol: null,
 
         initGame: async () => {
             set({ loading: true });
