@@ -33,12 +33,6 @@ jobs:
       - name: Build React App
         run: npm run build
 
-      # ADD THIS STEP HERE
-      - name: Configure Git
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
