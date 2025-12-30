@@ -8,14 +8,26 @@ const Board = () => {
   const gameResult = useGameStore(state => state.gameResult);
   const winningLine = useGameStore(state => state.winningLine);
   const makeMove = useGameStore(state => state.makeMove);
+  const playerSymbol = useGameStore(state => state.playerSymbol);
+  const pendingMove = useGameStore(state => state.pendingMove);
 
   const handleCellClick = (idx: number) => {    
-    if (!loading && !gameResult) {    
+    if (!loading && !gameResult && pendingMove === null) {    
       makeMove(idx);
     }
   }
 
   const isWinningCell = (idx: number) => winningLine.includes(idx);
+
+  const getCellValue = (idx: number) => {
+    if (pendingMove === idx && playerSymbol) {
+      return playerSymbol
+    }
+
+    return board[idx]
+  } 
+
+  const isCellPending = (idx: number) => pendingMove === idx;
 
   // TODO: make this listen to BoardSize (make that work)
   return (
@@ -23,10 +35,11 @@ const Board = () => {
       {board.map((cell, idx) => (
         <Cell
           key={idx}
-          value={cell}
+          value={getCellValue(idx)}
           isWinning={isWinningCell(idx)}
           onClick={() => handleCellClick(idx)}
-          disabled={loading || !!cell}
+          disabled={pendingMove !== null || !!cell}
+          isPending={isCellPending(idx)}
         />
       ))}
     </div>

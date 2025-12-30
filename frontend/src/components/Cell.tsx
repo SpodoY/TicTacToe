@@ -1,13 +1,15 @@
 import type { Player } from '../types/GameState';
+import { LoadingSpinner } from './utils/LoadingSpinner';
 
 type CellProps = {
   value: Player | null;
   isWinning: boolean;
   onClick: () => void;
   disabled: boolean;
+  isPending: boolean;
 }
 
-const Cell = ({ value, disabled, isWinning, onClick }: CellProps) => {
+const Cell = ({ value, disabled, isWinning, onClick, isPending }: CellProps) => {
 
   const stylings = {
     winningStyling: 'bg-green-400 text-white shadow-lg',
@@ -19,7 +21,7 @@ const Cell = ({ value, disabled, isWinning, onClick }: CellProps) => {
     <button
       onClick={onClick}
       disabled={disabled || !!value}
-      className={`aspect-square rounded-xl text-5xl font-bold transition-all duration-200 transform hover:scale-105 text-white
+      className={`flex justify-center items-center aspect-square rounded-xl font-bold transition-all duration-200 transform hover:scale-105 text-white
         ${value
           ? isWinning
             ? stylings.winningStyling
@@ -30,7 +32,9 @@ const Cell = ({ value, disabled, isWinning, onClick }: CellProps) => {
         disabled:hover:scale-100
         `}
     >
-      {value || ''}
+      {isPending 
+        ? <LoadingSpinner /> 
+        : <p className='text-4xl'> <b>{value || ''}</b></p> }
     </button>
   )
 }
