@@ -6,21 +6,23 @@ import { GameLogic } from '../utils/GameLogic';
 
 export interface GameStore extends GameState {
     loading: boolean;
-    winningLine: number[];
-
-    currentGameId: number | null
-    userAddress: string | null
     isPlayer1: boolean;
     isPlayer2: boolean;
-    playerSymbol: 'X' | 'O' | null;
     isWaitingForOpponent: boolean;
+
+    winningLine: number[];
+    pendingMove: number | null;
+    currentGameId: number | null
+    userAddress: string | null
+    playerSymbol: 'X' | 'O' | null;
+
 
     stateManager: GameStateManager;
 
     initGame: () => Promise<void>;
     loadGame: (gameId: number) => Promise<void>
     makeMove: (position: number) => Promise<void>;
-    resetGame: () => Promise<void>;
+    resetGame: () => void;
     syncState: (state: GameState) => void;
     updatePlayerInfo: (player1: string, player2: string) => void;
 }
@@ -28,7 +30,7 @@ export interface GameStore extends GameState {
 export const useGameStore = create<GameStore>((set, get) => {
 
     const initialManager = new BlockchainGameState({ 
-        contractAddress: '0x10269fB4c2c6F0cb04849Cd61708870691E5A348',
+        contractAddress: import.meta.env.VITE_SMART_CONTRACT_ADDRESS,
         onPlayerInfoUpdate: (player1: string, player2: string) => {
             get().updatePlayerInfo(player1, player2)
         }
@@ -43,6 +45,7 @@ export const useGameStore = create<GameStore>((set, get) => {
         currentPlayer: 'X',
         gameResult: null,
         loading: false,
+        pendingMove: null,
         winningLine: [],
         stateManager: initialManager,
         currentGameId: null,
@@ -92,7 +95,7 @@ export const useGameStore = create<GameStore>((set, get) => {
         },
 
         makeMove: async (position: number) => {
-            set({ loading: true });
+            set({ pendingMove: position });
             try {
                 const moveResult = await get().stateManager.makeMove(position);
                 if (moveResult.error) {
@@ -101,7 +104,7 @@ export const useGameStore = create<GameStore>((set, get) => {
             } catch (error: any) {
                 console.error('Failed to make move:', error)
             } finally {
-                set({ loading: false });
+                set({ pendingMove: null });
             }
         },
 
@@ -122,11 +125,17 @@ export const useGameStore = create<GameStore>((set, get) => {
         },
 
         syncState: (state: GameState) => {
+            const currentPendingMove = get().pendingMove;
+
+            const shouldClearPending = currentPendingMove !== null 
+                && state.board[currentPendingMove] !== null
+
             set({
                 board: state.board,
                 currentPlayer: state.currentPlayer,
                 gameResult: state.gameResult,
                 winningLine: state.winningLine,
+                pendingMove: shouldClearPending ? null : currentPendingMove
             });
         },
 

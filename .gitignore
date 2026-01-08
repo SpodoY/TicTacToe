@@ -18,7 +18,3 @@
 
 # Hardhat coverage reports
 /coverage
-
-.env*
-
-!.env.example
