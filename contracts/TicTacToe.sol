@@ -100,6 +100,8 @@ contract TicTacToe {
         cur.board[x][y] = curFiledStatus;
         cur.moves++;
 
+        emit MoveMade(gameId, msg.sender, x, y, cur.currentPlayer);
+
         //This is when all move are made
         if (cur.moves == FILED_SIZE * FILED_SIZE) {
             cur.isFinished = true;
@@ -151,7 +153,6 @@ contract TicTacToe {
             ? cur.player2
             : cur.player1;
 
-        emit MoveMade(gameId, msg.sender, x, y, cur.currentPlayer);
     }
 
     function won(uint256 gameId) internal {

@@ -13,6 +13,7 @@ export const GamePage = () => {
   const loading = useGameStore(state => state.loading)
   const playerSymbol = useGameStore(state => state.playerSymbol)
   const isWaitingForOpponent = useGameStore(state => state.isWaitingForOpponent)
+  const resetGame = useGameStore(state => state.resetGame)
 
   useEffect(() => {
     console.log(id, currentGameId)
@@ -23,6 +24,11 @@ export const GamePage = () => {
       }
     }
   }, [id, currentGameId, loadGame])
+  
+  useEffect(() => {
+    resetGame()
+  }, [])
+
 
   if (loading && !currentGameId) {
     return (
